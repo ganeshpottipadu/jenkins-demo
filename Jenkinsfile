@@ -10,23 +10,29 @@ pipeline {
             }
         }
 
-        stage('Build') {
+        stage('Build Docker Image') {
             steps {
-                sh 'echo "Building application..."'
-                sh 'ls -la'
+                sh 'docker build -t jenkins-demo:latest .'
             }
         }
 
-        stage('Test') {
+        stage('Stop Existing Container') {
             steps {
-                sh 'echo "Running tests..."'
-                sh 'cat index.html'
+                sh 'docker stop jenkins-demo || true'
+                sh 'docker rm jenkins-demo || true'
             }
         }
 
-        stage('Deploy') {
+        stage('Run Docker Container') {
             steps {
-                sh 'echo "Application deployed successfully!"'
+                sh 'docker run -d --name jenkins-demo -p 8080:80 jenkins-demo:latest'
+            }
+        }
+
+        stage('Verify Deployment') {
+            steps {
+                sh 'docker ps'
+                sh 'curl -I http://localhost:8080'
             }
         }
     }
