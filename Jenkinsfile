@@ -4,6 +4,7 @@ pipeline {
     }
 
     stages {
+
         stage('Checkout') {
             steps {
                 echo 'Code checked out from GitHub'
@@ -12,7 +13,7 @@ pipeline {
 
         stage('Build Docker Image') {
             steps {
-                sh 'docker build -t jenkins-demo:latest .'
+                sh 'docker build -t jenkins-demo:${BUILD_NUMBER} .'
             }
         }
 
@@ -25,7 +26,7 @@ pipeline {
 
         stage('Run Docker Container') {
             steps {
-                sh 'docker run -d --name jenkins-demo -p 8080:80 jenkins-demo:latest'
+                sh 'docker run -d --name jenkins-demo -p 8080:80 jenkins-demo:${BUILD_NUMBER}'
             }
         }
 
